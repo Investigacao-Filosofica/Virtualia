@@ -1,0 +1,5 @@
+[workspace]
+members = [
+  "programs/virtualia",
+]
+resolver = "2"
