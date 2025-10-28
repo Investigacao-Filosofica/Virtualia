@@ -1,7 +1,14 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
-import type { PublicKey } from "@solana/web3.js";
 
 export type ContentType = "artigo" | "resenha" | "tradução" | "certificado" | "outro";
+export type StorageProtocol = "ipfs" | "arweave";
+
+export type EducationLevel =
+  | "extensão"
+  | "graduação"
+  | "pós-graduação"
+  | "pesquisa"
+  | "outro";
 
 export interface MintedItem {
   id: string;
@@ -10,8 +17,16 @@ export interface MintedItem {
   contentType: ContentType;
   uri: string;
   reward: number;
-  owner: PublicKey | null;
+  ownerAddress: string;
   mintedAt: string;
+  year: string;
+  institution: string;
+  educationLevel: EducationLevel | string;
+  knowledgeArea: string;
+  knowledgeSubarea: string;
+  storageProtocol: StorageProtocol;
+  mintAddress: string;
+  metadataSignature: string;
 }
 
 interface MintedItemContextValue {
