@@ -4,6 +4,7 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { clusterApiUrl } from "@solana/web3.js";
 import { useMemo } from "react";
 import WalletConnection from "./components/WalletConnection";
+import WalletGate from "./components/WalletGate";
 import MintForm from "./components/MintForm";
 import MintedItemList from "./components/MintedItemList";
 import { MintedItemProvider } from "./components/MintedItemsContext";
@@ -25,26 +26,28 @@ const App = () => {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <MintedItemProvider>
-            <div className="app-shell">
-              <header>
-                <div>
-                  <h1>Virtualia</h1>
-                  <p>Mint seu currículo acadêmico on-chain na Solana.</p>
-                </div>
-                <WalletConnection />
-              </header>
-              <main className="main-grid">
-                <section className="card">
-                  <MintForm />
-                </section>
-                <section className="card">
-                  <MintedItemList />
-                </section>
-              </main>
-              <p className="footer-note">
-                Roadmap: suporte a vídeos, trilhas de workshops e emissão de certificados tokenizados.
-              </p>
-            </div>
+            <WalletGate>
+              <div className="app-shell">
+                <header>
+                  <div>
+                    <h1>Virtualia</h1>
+                    <p>Mint seu currículo acadêmico on-chain na Solana.</p>
+                  </div>
+                  <WalletConnection />
+                </header>
+                <main className="main-grid">
+                  <section className="card">
+                    <MintForm />
+                  </section>
+                  <section className="card">
+                    <MintedItemList />
+                  </section>
+                </main>
+                <p className="footer-note">
+                  Roadmap: suporte a vídeos, trilhas de workshops e emissão de certificados tokenizados.
+                </p>
+              </div>
+            </WalletGate>
           </MintedItemProvider>
         </WalletModalProvider>
       </WalletProvider>
