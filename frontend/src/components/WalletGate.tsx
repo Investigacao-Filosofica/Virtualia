@@ -1,6 +1,7 @@
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import WalletConnection from "./WalletConnection";
+import PitchHighlights from "./PitchHighlights";
 
 const WalletGate = ({ children }: PropsWithChildren) => {
   const { publicKey } = useWallet();
@@ -59,16 +60,19 @@ const WalletGate = ({ children }: PropsWithChildren) => {
   if (status !== "valid") {
     return (
       <div className="login-screen">
-        <div className="login-card">
-          <h1>Virtualia</h1>
-          <p>Conecte sua carteira Solana para acessar o estúdio de mintagem acadêmica.</p>
-          <WalletConnection />
-          {validationMessage && <p className="validation-message">{validationMessage}</p>}
-          <ul className="login-benefits">
-            <li>Registre artigos, certificados e traduções na blockchain.</li>
-            <li>Reúna seu portfólio acadêmico on-chain.</li>
-            <li>Distribua recompensas em tokens para colaboradores.</li>
-          </ul>
+        <div className="login-grid">
+          <div className="login-card">
+            <h1>Virtualia</h1>
+            <p>Conecte sua carteira Solana para acessar o estúdio de mintagem acadêmica.</p>
+            <WalletConnection />
+            {validationMessage && <p className="validation-message">{validationMessage}</p>}
+            <ul className="login-benefits">
+              <li>Registre artigos, certificados e traduções na blockchain.</li>
+              <li>Reúna seu portfólio acadêmico on-chain.</li>
+              <li>Distribua recompensas em tokens para colaboradores.</li>
+            </ul>
+          </div>
+          <PitchHighlights />
         </div>
       </div>
     );

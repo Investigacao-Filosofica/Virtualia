@@ -8,6 +8,7 @@ import WalletGate from "./components/WalletGate";
 import MintForm from "./components/MintForm";
 import MintedItemList from "./components/MintedItemList";
 import { MintedItemProvider } from "./components/MintedItemsContext";
+import PitchHighlights from "./components/PitchHighlights";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -41,6 +42,9 @@ const App = () => {
                   </section>
                   <section className="card">
                     <MintedItemList />
+                  </section>
+                  <section className="card pitch-card">
+                    <PitchHighlights variant="compact" />
                   </section>
                 </main>
                 <p className="footer-note">
