@@ -1,0 +1,11 @@
+# Frontend
+frontend/node_modules
+frontend/dist
+
+# Anchor
+contracts/node_modules
+contracts/target
+
+# General
+.DS_Store
+.env
