@@ -53,7 +53,7 @@ export const MintedItemProvider = ({ children }: { children: ReactNode }) => {
 export const useMintedItems = () => {
   const context = useContext(MintedItemContext);
   if (!context) {
-    throw new Error("useMintedItems deve ser usado dentro de MintedItemProvider");
+    throw new Error("useMintedItems must be used within a MintedItemProvider");
   }
   return context;
 };

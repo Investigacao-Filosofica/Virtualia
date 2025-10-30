@@ -169,6 +169,23 @@ h1 {
   gap: 1rem;
 }
 
+.language-toggle {
+  background: rgba(20, 241, 149, 0.15);
+  border: 1px solid rgba(20, 241, 149, 0.4);
+  border-radius: 999px;
+  color: #f9fafb;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.language-toggle:hover {
+  background: rgba(20, 241, 149, 0.25);
+  border-color: rgba(20, 241, 149, 0.7);
+  transform: translateY(-1px);
+}
+
 .header-search {
   position: relative;
 }
