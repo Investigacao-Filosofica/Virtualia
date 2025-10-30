@@ -1,22 +1,56 @@
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { enUS, ptBR } from "date-fns/locale";
 import { useMemo } from "react";
 import { useMintedItems, ContentType } from "./MintedItemsContext";
+import { useLanguage } from "./LanguageContext";
 
 interface MintedItemListProps {
   searchTerm?: string;
 }
 
-const categoryLabels: Record<ContentType, string> = {
-  artigo: "Artigos e papers",
-  resenha: "Resenhas e recensões",
-  tradução: "Traduções publicadas",
-  certificado: "Certificados e formações",
-  outro: "Outras produções",
-};
-
 const MintedItemList = ({ searchTerm = "" }: MintedItemListProps) => {
   const { items } = useMintedItems();
+  const { language } = useLanguage();
+
+  const translations = {
+    en: {
+      categories: {
+        artigo: "Articles and papers",
+        resenha: "Reviews and critiques",
+        tradução: "Published translations",
+        certificado: "Certificates and training",
+        outro: "Other works",
+      },
+      emptyTitle: "No NFTs found",
+      emptySubtitle: "Start minting works to fill your academic showcase.",
+      noDescription: "No description provided.",
+      knowledge: "Knowledge area",
+      protocol: "Protocol",
+      openMedia: "Open on-chain media ↗",
+      author: "Author",
+      dateFormat: "MM/dd/yyyy",
+    },
+    pt: {
+      categories: {
+        artigo: "Artigos e papers",
+        resenha: "Resenhas e recensões",
+        tradução: "Traduções publicadas",
+        certificado: "Certificados e formações",
+        outro: "Outras produções",
+      },
+      emptyTitle: "Nenhum NFT encontrado",
+      emptySubtitle: "Comece mintando produções para popular sua vitrine acadêmica.",
+      noDescription: "Sem descrição adicionada.",
+      knowledge: "Área do conhecimento",
+      protocol: "Protocolo",
+      openMedia: "Abrir mídia on-chain ↗",
+      author: "Autor",
+      dateFormat: "dd/MM/yyyy",
+    },
+  } as const;
+
+  const t = translations[language];
+  const locale = language === "pt" ? ptBR : enUS;
 
   const normalizedSearch = searchTerm.trim().toLowerCase();
 
@@ -68,8 +102,8 @@ const MintedItemList = ({ searchTerm = "" }: MintedItemListProps) => {
   if (!hasAnyItem) {
     return (
       <div className="empty-state">
-        <h3>Nenhum NFT encontrado</h3>
-        <p>Comece mintando produções para popular sua vitrine acadêmica.</p>
+        <h3>{t.emptyTitle}</h3>
+        <p>{t.emptySubtitle}</p>
       </div>
     );
   }
@@ -84,7 +118,7 @@ const MintedItemList = ({ searchTerm = "" }: MintedItemListProps) => {
         return (
           <section key={category} className="category-section">
             <header className="category-header">
-              <h3>{categoryLabels[category as ContentType]}</h3>
+              <h3>{t.categories[category as ContentType]}</h3>
               <span className="badge">{entries.length}</span>
             </header>
             <div className="category-row">
@@ -99,20 +133,20 @@ const MintedItemList = ({ searchTerm = "" }: MintedItemListProps) => {
                     </div>
                     <span className="badge badge--success">+{item.reward.toFixed(4)} SOL</span>
                   </header>
-                  <p>{item.description || "Sem descrição adicionada."}</p>
+                  <p>{item.description || t.noDescription}</p>
                   <p className="minted-meta">
-                    Área do conhecimento: {item.knowledgeArea} · {item.knowledgeSubarea}
+                    {t.knowledge}: {item.knowledgeArea} · {item.knowledgeSubarea}
                   </p>
                   <p className="minted-meta">
-                    Protocolo: {item.storageProtocol.toUpperCase()} · NFT {shorten(item.mintAddress)}
+                    {t.protocol}: {item.storageProtocol.toUpperCase()} · NFT {shorten(item.mintAddress)}
                   </p>
                   <p className="minted-meta">Tx: {shorten(item.metadataSignature)}</p>
                   <footer>
                     <a href={item.uri} target="_blank" rel="noreferrer">
-                      Abrir mídia on-chain ↗
+                      {t.openMedia}
                     </a>
-                    <span>{format(new Date(item.mintedAt), "dd/MM/yyyy", { locale: ptBR })}</span>
-                    <span className="minted-owner">Autor: {shorten(item.ownerAddress)}</span>
+                    <span>{format(new Date(item.mintedAt), t.dateFormat, { locale })}</span>
+                    <span className="minted-owner">{t.author}: {shorten(item.ownerAddress)}</span>
                   </footer>
                 </article>
               ))}

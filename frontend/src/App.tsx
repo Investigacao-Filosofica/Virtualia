@@ -11,6 +11,7 @@ import { ProfileProvider } from "./components/ProfileContext";
 import ProfilePage from "./components/ProfilePage";
 import MintingPage from "./components/MintingPage";
 import ProfileEditModal from "./components/ProfileEditModal";
+import { useLanguage } from "./components/LanguageContext";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -27,6 +28,26 @@ const App = () => {
   const [view, setView] = useState<"profile" | "mint">("profile");
   const [globalSearch, setGlobalSearch] = useState("");
   const [editingProfile, setEditingProfile] = useState(false);
+  const { language, toggleLanguage } = useLanguage();
+
+  const translations = {
+    en: {
+      tagline: "Academic résumés as NFTs on Solana.",
+      searchLabel: "Search works or users",
+      searchPlaceholder: "Search works or users",
+      footer: "Roadmap: support for videos, workshop tracks, and tokenized certificate issuance.",
+      languageSwitch: "Português",
+    },
+    pt: {
+      tagline: "Currículos acadêmicos como NFTs na Solana.",
+      searchLabel: "Buscar produções ou usuários",
+      searchPlaceholder: "Buscar produções ou usuários",
+      footer: "Roadmap: suporte a vídeos, trilhas de workshops e emissão de certificados tokenizados.",
+      languageSwitch: "English",
+    },
+  } as const;
+
+  const t = translations[language];
 
   const goToProfile = () => {
     setView("profile");
@@ -43,18 +64,21 @@ const App = () => {
                   <header className="app-header">
                     <div>
                       <h1>Virtualia</h1>
-                      <p>Currículos acadêmicos como NFTs na Solana.</p>
+                      <p>{t.tagline}</p>
                     </div>
                     <div className="header-tools">
+                      <button type="button" className="language-toggle" onClick={toggleLanguage}>
+                        {t.languageSwitch}
+                      </button>
                       <div className="header-search">
                         <label htmlFor="globalSearch" className="sr-only">
-                          Buscar produções ou usuários
+                          {t.searchLabel}
                         </label>
                         <input
                           id="globalSearch"
                           value={globalSearch}
                           onChange={(event) => setGlobalSearch(event.target.value)}
-                          placeholder="Buscar produções ou usuários"
+                          placeholder={t.searchPlaceholder}
                         />
                       </div>
                       <WalletConnection />
@@ -71,9 +95,7 @@ const App = () => {
                       <MintingPage onBackToProfile={goToProfile} onMintSuccess={goToProfile} />
                     )}
                   </main>
-                  <p className="footer-note">
-                    Roadmap: suporte a vídeos, trilhas de workshops e emissão de certificados tokenizados.
-                  </p>
+                  <p className="footer-note">{t.footer}</p>
                   <ProfileEditModal open={editingProfile} onClose={() => setEditingProfile(false)} />
                 </div>
               </WalletGate>

@@ -21,8 +21,8 @@ export interface MintResponse {
 }
 
 /**
- * TODO: substituir por chamada real ao programa Anchor.
- * Atualmente simula a interação e retorna recompensa fictícia.
+ * TODO: replace with a real call to the Anchor program.
+ * Currently simulates the interaction and returns a fictitious reward.
  */
 export const mintContentMock = async (
   _connection: Connection,
