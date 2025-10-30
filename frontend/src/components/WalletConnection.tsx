@@ -17,7 +17,7 @@ const WalletConnection = () => {
   if (!wallet || !publicKey) {
     return (
       <button type="button" className="wallet-button" onClick={handleConnect}>
-        Conectar carteira
+        Connect wallet
       </button>
     );
   }
