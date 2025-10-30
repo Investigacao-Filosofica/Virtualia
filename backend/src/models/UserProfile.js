@@ -57,6 +57,9 @@ const UserProfileSchema = new mongoose.Schema(
       required: false,
       trim: true,
       lowercase: true,
+      unique: true,
+      sparse: true,
+      match: [/.+@.+\..+/, 'Invalid email format'],
     },
     bio: {
       type: String,
@@ -79,6 +82,11 @@ const UserProfileSchema = new mongoose.Schema(
     customAttributes: {
       type: Map,
       of: mongoose.Schema.Types.Mixed,
+    },
+    passwordHash: {
+      type: String,
+      required: false,
+      select: false,
     },
   },
   {

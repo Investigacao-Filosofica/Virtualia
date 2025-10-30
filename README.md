@@ -31,7 +31,7 @@ Virtualia é uma plataforma on-chain para destacar produções acadêmicas como 
    npm run dev
    ```
 
-3. Utilize os endpoints REST para criar ou atualizar perfis (`POST /api/users`), consultar (`GET /api/users/:walletAddress`) e anexar novos certificados (`POST /api/users/:walletAddress/certificates`).
+3. Utilize os endpoints REST para criar ou atualizar perfis (`POST /api/users`), consultar (`GET /api/users/:walletAddress`), anexar novos certificados (`POST /api/users/:walletAddress/certificates`) e autenticar usuários pelo e-mail (`POST /api/users/auth/login`).
 
 ## Estado atual
 
