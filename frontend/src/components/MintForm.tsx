@@ -359,25 +359,7 @@ const MintForm = ({ onMinted }: MintFormProps) => {
           />
         </div>
       </div>
-      <div className="input-group">
-        <label htmlFor="storageProtocol">{t.storageLabel}</label>
-        <select
-          id="storageProtocol"
-          value={storageProtocol}
-          onChange={(event) => {
-            setStorageProtocol(event.target.value as StorageProtocol);
-            setUri("");
-            setUploadStatus(null);
-          }}
-        >
-          {storageOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-group">
+      {/* <div className="input-group">
         <label htmlFor="uri">{t.uriLabel}</label>
         <input
           id="uri"
@@ -386,7 +368,7 @@ const MintForm = ({ onMinted }: MintFormProps) => {
           placeholder="https://..."
           required
         />
-      </div>
+      </div> */}
       <div className="input-group">
         <label htmlFor="file">{t.fileLabel}</label>
         <input id="file" type="file" accept=".pdf,.png,.jpg,.jpeg,.mp4" onChange={handleFileUpload} />
