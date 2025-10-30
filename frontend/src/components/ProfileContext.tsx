@@ -15,12 +15,12 @@ interface ProfileContextValue {
 }
 
 const defaultProfile: ProfileData = {
-  displayName: "Pesquisador(a) Anônimo(a)",
-  headline: "Construa seu currículo acadêmico verificável",
-  bio: "Atualize seu perfil para personalizar o currículo on-chain e facilitar descobertas na rede acadêmica.",
+  displayName: "Anonymous Researcher",
+  headline: "Build your verifiable academic résumé",
+  bio: "Update your profile to personalize the on-chain résumé and increase academic network discovery.",
   avatarUrl: "",
-  location: "Brasil",
-  focusAreas: ["Blockchain aplicada à educação", "Cidadania científica", "Extensão universitária"],
+  location: "Brazil",
+  focusAreas: ["Blockchain applied to education", "Scientific citizenship", "University outreach"],
 };
 
 const ProfileContext = createContext<ProfileContextValue | undefined>(undefined);
@@ -43,7 +43,7 @@ export const ProfileProvider = ({ children }: PropsWithChildren) => {
 export const useProfile = () => {
   const context = useContext(ProfileContext);
   if (!context) {
-    throw new Error("useProfile deve ser usado dentro de ProfileProvider");
+    throw new Error("useProfile must be used within a ProfileProvider");
   }
   return context;
 };

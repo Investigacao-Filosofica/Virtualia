@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { ProfileData, useProfile } from "./ProfileContext";
+import { useLanguage } from "./LanguageContext";
 
 interface ProfileEditModalProps {
   open: boolean;
@@ -19,6 +20,46 @@ const ProfileEditModal = ({ open, onClose }: ProfileEditModalProps) => {
   const { profile, updateProfile } = useProfile();
   const [formState, setFormState] = useState<ProfileData>(emptyForm);
   const [focusAreasInput, setFocusAreasInput] = useState("");
+  const { language } = useLanguage();
+
+  const translations = {
+    en: {
+      title: "Edit profile",
+      nameLabel: "Name",
+      namePlaceholder: "How should we display you?",
+      headlineLabel: "Short description",
+      headlinePlaceholder: "Researcher in...",
+      bioLabel: "About you",
+      bioPlaceholder: "Share achievements, goals, and ongoing projects.",
+      locationLabel: "Location",
+      locationPlaceholder: "City, Country",
+      focusAreasLabel: "Focus areas",
+      focusAreasPlaceholder: "Blockchain, Web3, Outreach",
+      avatarLabel: "Profile photo",
+      avatarHint: "Square images look best on the profile showcase.",
+      cancel: "Cancel",
+      save: "Save changes",
+    },
+    pt: {
+      title: "Editar perfil",
+      nameLabel: "Nome",
+      namePlaceholder: "Como deseja ser exibido?",
+      headlineLabel: "Descrição curta",
+      headlinePlaceholder: "Pesquisador em...",
+      bioLabel: "Sobre você",
+      bioPlaceholder: "Compartilhe conquistas, objetivos e projetos em andamento.",
+      locationLabel: "Localização",
+      locationPlaceholder: "Cidade, País",
+      focusAreasLabel: "Focos de atuação",
+      focusAreasPlaceholder: "Blockchain, Web3, Extensão",
+      avatarLabel: "Foto de perfil",
+      avatarHint: "Imagens quadradas ficam melhores na vitrine do perfil.",
+      cancel: "Cancelar",
+      save: "Salvar alterações",
+    },
+  } as const;
+
+  const t = translations[language];
 
   useEffect(() => {
     if (!open) {
@@ -66,33 +107,33 @@ const ProfileEditModal = ({ open, onClose }: ProfileEditModalProps) => {
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <form className="modal-card" onSubmit={handleSubmit}>
         <header>
-          <h2>Editar perfil</h2>
+          <h2>{t.title}</h2>
         </header>
         <div className="input-group">
-          <label htmlFor="displayName">Nome</label>
+          <label htmlFor="displayName">{t.nameLabel}</label>
           <input
             id="displayName"
             value={formState.displayName}
             onChange={(event) =>
               setFormState((previous) => ({ ...previous, displayName: event.target.value }))
             }
-            placeholder="Como deseja ser exibido?"
+            placeholder={t.namePlaceholder}
             required
           />
         </div>
         <div className="input-group">
-          <label htmlFor="headline">Descrição curta</label>
+          <label htmlFor="headline">{t.headlineLabel}</label>
           <input
             id="headline"
             value={formState.headline}
             onChange={(event) =>
               setFormState((previous) => ({ ...previous, headline: event.target.value }))
             }
-            placeholder="Pesquisador em..."
+            placeholder={t.headlinePlaceholder}
           />
         </div>
         <div className="input-group">
-          <label htmlFor="bio">Sobre você</label>
+          <label htmlFor="bio">{t.bioLabel}</label>
           <textarea
             id="bio"
             rows={4}
@@ -100,47 +141,47 @@ const ProfileEditModal = ({ open, onClose }: ProfileEditModalProps) => {
             onChange={(event) =>
               setFormState((previous) => ({ ...previous, bio: event.target.value }))
             }
-            placeholder="Compartilhe conquistas, objetivos e projetos em andamento."
+            placeholder={t.bioPlaceholder}
           />
         </div>
         <div className="multi-input">
           <div className="input-group">
-            <label htmlFor="location">Localização</label>
+            <label htmlFor="location">{t.locationLabel}</label>
             <input
               id="location"
               value={formState.location ?? ""}
               onChange={(event) =>
                 setFormState((previous) => ({ ...previous, location: event.target.value }))
               }
-              placeholder="Cidade, País"
+              placeholder={t.locationPlaceholder}
             />
           </div>
           <div className="input-group">
-            <label htmlFor="focusAreas">Focos de atuação</label>
+            <label htmlFor="focusAreas">{t.focusAreasLabel}</label>
             <input
               id="focusAreas"
               value={focusAreasInput}
               onChange={(event) => setFocusAreasInput(event.target.value)}
-              placeholder="Blockchain, Web3, Extensão"
+              placeholder={t.focusAreasPlaceholder}
             />
           </div>
         </div>
         <div className="input-group">
-          <label htmlFor="avatarUpload">Foto de perfil</label>
+          <label htmlFor="avatarUpload">{t.avatarLabel}</label>
           <input
             id="avatarUpload"
             type="file"
             accept="image/png, image/jpeg"
             onChange={(event) => handleAvatar(event.target.files?.[0])}
           />
-          <small>Imagens quadradas ficam melhores na vitrine do perfil.</small>
+          <small>{t.avatarHint}</small>
         </div>
         <div className="modal-actions">
           <button type="button" className="outline-button" onClick={onClose}>
-            Cancelar
+            {t.cancel}
           </button>
           <button className="primary-button" type="submit">
-            Salvar alterações
+            {t.save}
           </button>
         </div>
       </form>

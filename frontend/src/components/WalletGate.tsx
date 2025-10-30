@@ -5,6 +5,7 @@ import PitchHighlights from "./PitchHighlights";
 import EmailLoginForm from "./EmailLoginForm";
 import WalletConnection from "./WalletConnection";
 import { useProfile } from "./ProfileContext";
+import { useLanguage } from "./LanguageContext";
 
 const WalletGate = ({ children }: PropsWithChildren) => {
   const { publicKey } = useWallet();
@@ -14,6 +15,28 @@ const WalletGate = ({ children }: PropsWithChildren) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [authMethod, setAuthMethod] = useState<"wallet" | "email">("wallet");
   const [isEmailAuthenticated, setIsEmailAuthenticated] = useState(false);
+  const { language } = useLanguage();
+
+  const translations = {
+    en: {
+      validationError: "We couldn't validate your wallet. Please try again.",
+      validating: "Validating connected wallet...",
+      connectPrompt: "Connect your Solana wallet to access the academic minting studio.",
+      chooseMethod: "Choose how you want to access the academic minting studio.",
+      walletMethod: "Solana Wallet",
+      emailMethod: "Institutional Email",
+    },
+    pt: {
+      validationError: "Não foi possível validar a carteira. Tente novamente.",
+      validating: "Validando carteira conectada...",
+      connectPrompt: "Conecte sua carteira Solana para acessar o estúdio de mintagem acadêmica.",
+      chooseMethod: "Escolha como deseja acessar o estúdio de mintagem acadêmica.",
+      walletMethod: "Carteira Solana",
+      emailMethod: "E-mail institucional",
+    },
+  } as const;
+
+  const t = translations[language];
 
   useEffect(() => {
     let cancelled = false;
@@ -42,10 +65,10 @@ const WalletGate = ({ children }: PropsWithChildren) => {
           setStatus("valid");
         }
       } catch (error) {
-        console.error("Erro ao validar carteira", error);
+        console.error("Error validating wallet", error);
         if (!cancelled) {
           setStatus("error");
-          setErrorMessage("Não foi possível validar a carteira. Tente novamente.");
+          setErrorMessage(t.validationError);
         }
       }
     };
@@ -55,11 +78,11 @@ const WalletGate = ({ children }: PropsWithChildren) => {
     return () => {
       cancelled = true;
     };
-  }, [connection, isEmailAuthenticated, publicKey]);
+  }, [connection, isEmailAuthenticated, publicKey, t.validationError]);
 
   const validationMessage = useMemo(() => {
     if (status === "validating") {
-      return "Validando carteira conectada...";
+      return t.validating;
     }
 
     if (status === "error" && errorMessage) {
@@ -67,7 +90,7 @@ const WalletGate = ({ children }: PropsWithChildren) => {
     }
 
     return null;
-  }, [errorMessage, status]);
+  }, [errorMessage, status, t.validating]);
 
   const isAuthenticated = status === "valid" || isEmailAuthenticated;
 
@@ -146,7 +169,7 @@ const WalletGate = ({ children }: PropsWithChildren) => {
         <div className="login-grid">
           <div className="login-card">
             <h1>Virtualia</h1>
-            <p>Escolha como deseja acessar o estúdio de mintagem acadêmica.</p>
+            <p>{t.chooseMethod}</p>
             <div className="login-method-toggle" role="tablist" aria-label="Métodos de login">
               <button
                 type="button"
@@ -155,7 +178,7 @@ const WalletGate = ({ children }: PropsWithChildren) => {
                 className={clsx("toggle-option", { active: authMethod === "wallet" })}
                 onClick={() => setAuthMethod("wallet")}
               >
-                Carteira Solana
+                {t.walletMethod}
               </button>
               <button
                 type="button"
@@ -164,7 +187,7 @@ const WalletGate = ({ children }: PropsWithChildren) => {
                 className={clsx("toggle-option", { active: authMethod === "email" })}
                 onClick={() => setAuthMethod("email")}
               >
-                E-mail institucional
+                {t.emailMethod}
               </button>
             </div>
             {authMethod === "wallet" ? (
@@ -176,7 +199,6 @@ const WalletGate = ({ children }: PropsWithChildren) => {
               <EmailLoginForm onSuccess={handleEmailLoginSuccess} />
             )}
           </div>
-          {/* <PitchHighlights /> */}
         </div>
       </div>
     );
