@@ -65,14 +65,8 @@ const WalletGate = ({ children }: PropsWithChildren) => {
             <h1>Virtualia</h1>
             <p>Conecte sua carteira Solana para acessar o estúdio de mintagem acadêmica.</p>
             <WalletConnection />
-            {validationMessage && <p className="validation-message">{validationMessage}</p>}
-            <ul className="login-benefits">
-              <li>Registre artigos, certificados e traduções na blockchain.</li>
-              <li>Reúna seu portfólio acadêmico on-chain.</li>
-              <li>Distribua recompensas em tokens para colaboradores.</li>
-            </ul>
           </div>
-          <PitchHighlights />
+          {/* <PitchHighlights /> */}
         </div>
       </div>
     );

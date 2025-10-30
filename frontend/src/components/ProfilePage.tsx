@@ -167,9 +167,7 @@ const ProfilePage = ({ onCreate, onEditProfile, globalSearchTerm }: ProfilePageP
         <MintedItemList searchTerm={searchTerm} />
       </section>
 
-      <section className="card highlights-card">
-        <PitchHighlights />
-      </section>
+      
     </div>
   );
 };

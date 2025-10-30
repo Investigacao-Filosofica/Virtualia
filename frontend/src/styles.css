@@ -30,12 +30,6 @@ body {
   padding: 2rem;
 }
 
-.login-grid {
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: minmax(320px, 420px) minmax(320px, 1fr);
-  align-items: stretch;
-}
 
 .login-card {
   background: rgba(11, 17, 32, 0.9);
@@ -467,8 +461,8 @@ h1 {
 }
 
 .minting-page {
-  display: grid;
-  gap: 1.5rem;
+  /* display: grid; */
+  /* gap: 1.5rem; */
 }
 
 .minting-header h2 {
@@ -481,13 +475,6 @@ h1 {
 
 .minting-header .outline-button {
   margin-bottom: 1rem;
-}
-
-.minting-layout {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: minmax(320px, 1fr) minmax(260px, 0.6fr);
-  align-items: flex-start;
 }
 
 .minting-checklist {
@@ -571,10 +558,6 @@ h1 {
 
   .pitch-highlights {
     padding: 2rem 1.75rem;
-  }
-
-  .minting-layout {
-    grid-template-columns: 1fr;
   }
 
   .profile-hero {
