@@ -9,7 +9,7 @@ import {
   StorageProtocol,
 } from "./MintedItemsContext";
 import { mintContentMock } from "../services/solana";
-import { uploadToDecentralizedStorage } from "../services/storage";
+import { uploadToDecentralizedStorage, type UploadResult } from "../services/storage";
 import { useLanguage } from "./LanguageContext";
 
 interface MintFormProps {
@@ -74,6 +74,7 @@ const translations = {
       `Upload completed on ${protocol} (${filename})`,
     uploadError: "Failed to upload file. Please try again.",
     mintError: "Failed to mint. Check the console for details.",
+    viewUploadedFile: "Open file",
   },
   pt: {
     title: "Registrar nova produção",
@@ -105,8 +106,16 @@ const translations = {
       `Upload concluído no ${protocol} (${filename})`,
     uploadError: "Falha ao enviar arquivo. Tente novamente.",
     mintError: "Não foi possível mintar. Verifique o console para detalhes.",
+    viewUploadedFile: "Abrir arquivo",
   },
 } as const;
+
+const resolveGatewayUrl = (uri: string): string => {
+  if (uri.startsWith("ipfs://")) {
+    return `https://gateway.pinata.cloud/ipfs/${uri.slice("ipfs://".length)}`;
+  }
+  return uri;
+};
 
 const MintForm = ({ onMinted }: MintFormProps) => {
   const { publicKey } = useWallet();
@@ -126,6 +135,7 @@ const MintForm = ({ onMinted }: MintFormProps) => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<UploadResult | null>(null);
 
   const t = translations[language];
 
@@ -174,6 +184,7 @@ const MintForm = ({ onMinted }: MintFormProps) => {
 
   useEffect(() => {
     setUploadStatus(null);
+    setUploadedFileInfo(null);
   }, [storageProtocol, language]);
 
   const handleMint = async (event: FormEvent<HTMLFormElement>) => {
@@ -245,15 +256,18 @@ const MintForm = ({ onMinted }: MintFormProps) => {
     if (!file) return;
     setUploading(true);
     setUploadStatus(t.uploadPreparing);
+    setUploadedFileInfo(null);
 
     uploadToDecentralizedStorage(file, storageProtocol)
       .then((result) => {
         setUri(result.uri);
         setUploadStatus(t.uploadSuccess(result.protocol.toUpperCase(), result.filename));
+        setUploadedFileInfo(result);
       })
       .catch((error) => {
         console.error("Failed to upload file", error);
         setUploadStatus(t.uploadError);
+        setUploadedFileInfo(null);
       })
       .finally(() => {
         setUploading(false);
@@ -373,7 +387,23 @@ const MintForm = ({ onMinted }: MintFormProps) => {
         <label htmlFor="file">{t.fileLabel}</label>
         <input id="file" type="file" accept=".pdf,.png,.jpg,.jpeg,.mp4" onChange={handleFileUpload} />
         <small>{t.fileHint.replace("{protocol}", storageProtocol.toUpperCase())}</small>
-        {uploadStatus && <small className="upload-status">{uploadStatus}</small>}
+        {uploadStatus && (
+          <small className="upload-status">
+            {uploadStatus}
+            {uploadedFileInfo && (
+              <>
+                {" — "}
+                <a
+                  href={resolveGatewayUrl(uploadedFileInfo.uri)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t.viewUploadedFile}
+                </a>
+              </>
+            )}
+          </small>
+        )}
       </div>
       <button className="primary-button" type="submit" disabled={isDisabled}>
         {loading ? t.submitLoading : t.submitIdle}
