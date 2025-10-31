@@ -60,6 +60,10 @@ export const initializeUserProfile = async (
   wallet: any
 ): Promise<string> => {
   try {
+    if (!wallet || !wallet.publicKey) {
+      throw new Error("Wallet not connected");
+    }
+
     const program = getVirtualiaProgram(connection, wallet);
     const publicKey = wallet.publicKey;
 
@@ -99,6 +103,10 @@ export const mintContent = async (
   payload: MintRequest
 ): Promise<MintResponse> => {
   try {
+    if (!wallet || !wallet.publicKey) {
+      throw new Error("Wallet not connected");
+    }
+
     const program = getVirtualiaProgram(connection, wallet);
     const publicKey = wallet.publicKey;
 

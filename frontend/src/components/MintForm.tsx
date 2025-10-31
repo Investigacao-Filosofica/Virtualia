@@ -118,7 +118,8 @@ const resolveGatewayUrl = (uri: string): string => {
 };
 
 const MintForm = ({ onMinted }: MintFormProps) => {
-  const { publicKey } = useWallet();
+  const wallet = useWallet();
+  const { publicKey } = wallet;
   const { connection } = useConnection();
   const { addItem } = useMintedItems();
   const { language } = useLanguage();
@@ -196,7 +197,7 @@ const MintForm = ({ onMinted }: MintFormProps) => {
       setLoading(true);
       const { rewardLamports, mintAddress, metadataSignature } = await mintContentMock(
         connection,
-        publicKey,
+        wallet,
         {
           title,
           description,
