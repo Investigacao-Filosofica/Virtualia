@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-declare_id!("11111111111111111111111111111111");
+declare_id!("9tiQZMaqGUhPLH7y4oYo6CTAQmFK18G1WsCrDjkDPDak");
 
 #[program]
 pub mod virtualia {
@@ -32,7 +32,7 @@ pub mod virtualia {
         content.uri = metadata.uri;
         content.content_type = metadata.content_type;
         content.reward_lamports = metadata.reward_lamports;
-        content.bump = *ctx.bumps.get("content").unwrap();
+        content.bump = ctx.bumps.content;
         content.created_at = Clock::get()?.unix_timestamp;
 
         Ok(())
@@ -40,8 +40,12 @@ pub mod virtualia {
 
     pub fn distribute_reward(ctx: Context<DistributeReward>, amount: u64) -> Result<()> {
         require!(amount > 0, VirtualiaError::InvalidReward);
-        let seeds = &[b"profile", ctx.accounts.authority.key().as_ref(), &[ctx.accounts.profile.bump]];
+        
+        let authority_key = ctx.accounts.authority.key();
+        let bump = &[ctx.accounts.profile.bump];
+        let seeds = &[b"profile".as_ref(), authority_key.as_ref(), bump];
         let signer = &[&seeds[..]];
+        
         let cpi_accounts = Transfer {
             from: ctx.accounts.treasury.to_account_info(),
             to: ctx.accounts.recipient.to_account_info(),

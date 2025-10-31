@@ -1,5 +1,5 @@
 import { Program, AnchorProvider, web3, BN } from "@coral-xyz/anchor";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
 import type { ContentType, EducationLevel, StorageProtocol } from "../components/MintedItemsContext";
 import { SOLANA_CONFIG, PROGRAM_ID_VALIDATED } from "../config/solana";
 
@@ -83,6 +83,7 @@ export const initializeUserProfile = async (
         .accounts({
           authority: publicKey,
           profile: profilePda,
+          systemProgram: SystemProgram.programId,
         })
         .rpc();
 
@@ -102,6 +103,12 @@ export const mintContent = async (
   wallet: any,
   payload: MintRequest
 ): Promise<MintResponse> => {
+  // Check if using System Program (placeholder) - use mock instead
+  if (PROGRAM_ID.toBase58() === "11111111111111111111111111111111") {
+    console.warn("⚠️ Using mock mint - Deploy contract and update VITE_VIRTUALIA_PROGRAM_ID");
+    return mintContentMockInternal(connection, wallet, payload);
+  }
+
   try {
     if (!wallet || !wallet.publicKey) {
       throw new Error("Wallet not connected");
@@ -148,6 +155,7 @@ export const mintContent = async (
         authority: publicKey,
         profile: profilePda,
         content: contentPda,
+        systemProgram: SystemProgram.programId,
       })
       .rpc();
 
@@ -163,7 +171,30 @@ export const mintContent = async (
 };
 
 /**
- * Legacy mock function - kept for backward compatibility during transition
- * TODO: Remove this once all references are updated to use mintContent
+ * Internal mock function for testing without deployed contract
+ * This is called automatically by mintContent when Program ID is placeholder
  */
-export const mintContentMock = mintContent;
+const mintContentMockInternal = async (
+  _connection: Connection,
+  wallet: any,
+  payload: MintRequest
+): Promise<MintResponse> => {
+  if (!wallet || !wallet.publicKey) {
+    throw new Error("Wallet not connected");
+  }
+  
+  await new Promise((resolve) => setTimeout(resolve, 1200));
+  const simulatedReward = 0.02 + Math.random() * 0.03;
+  const rewardLamports = simulatedReward * 1_000_000_000;
+  const mintAddress = `Mock${Array.from({ length: 3 })
+    .map(() => Math.random().toString(36).slice(2, 12))
+    .join("")
+    .slice(0, 32)}`;
+  const metadataSignature = `MockSig${Math.random().toString(36).slice(2, 12)}${Date.now().toString(36)}`;
+
+  return {
+    rewardLamports,
+    mintAddress,
+    metadataSignature,
+  };
+};

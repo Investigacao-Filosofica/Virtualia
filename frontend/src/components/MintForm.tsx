@@ -8,7 +8,7 @@ import {
   EducationLevel,
   StorageProtocol,
 } from "./MintedItemsContext";
-import { mintContentMock } from "../services/solana";
+import { mintContent } from "../services/solana";
 import { uploadToDecentralizedStorage, type UploadResult } from "../services/storage";
 import { useLanguage } from "./LanguageContext";
 
@@ -195,7 +195,7 @@ const MintForm = ({ onMinted }: MintFormProps) => {
 
     try {
       setLoading(true);
-      const { rewardLamports, mintAddress, metadataSignature } = await mintContentMock(
+      const { rewardLamports, mintAddress, metadataSignature } = await mintContent(
         connection,
         wallet,
         {
