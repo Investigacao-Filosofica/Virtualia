@@ -3,8 +3,8 @@ import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
 import type { ContentType, EducationLevel, StorageProtocol } from "../components/MintedItemsContext";
 import { SOLANA_CONFIG, PROGRAM_ID_VALIDATED } from "../config/solana";
 
-// Import the IDL (this would be generated from the Anchor program)
-import { IDL } from "../../../contracts/target/types/virtualia";
+// Import the IDL (versioned in frontend for build compatibility)
+import { IDL } from "../idl/virtualia";
 
 interface MintRequest {
   title: string;
