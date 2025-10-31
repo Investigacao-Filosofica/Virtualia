@@ -163,22 +163,21 @@ const MintForm = ({ onMinted }: MintFormProps) => {
       uploading ||
       !publicKey ||
       !title.trim() ||
-      !uri.trim() ||
+      !uri.trim() || // URI is required (populated after file upload)
       !year.trim() ||
       !institution.trim() ||
       !knowledgeArea.trim() ||
       !knowledgeSubarea.trim(),
     [
-      educationLevel,
+      loading,
+      uploading,
+      publicKey,
+      title,
+      uri,
+      year,
       institution,
       knowledgeArea,
       knowledgeSubarea,
-      loading,
-      publicKey,
-      title,
-      uploading,
-      uri,
-      year,
     ]
   );
 
@@ -409,6 +408,13 @@ const MintForm = ({ onMinted }: MintFormProps) => {
         {loading ? t.submitLoading : t.submitIdle}
       </button>
       {!publicKey && <p>{t.connectWallet}</p>}
+      {publicKey && !uri.trim() && (
+        <p style={{ color: "#ffa500", marginTop: "0.5rem" }}>
+          {language === "pt" 
+            ? "⚠️ Faça o upload de um arquivo para habilitar o registro"
+            : "⚠️ Upload a file to enable registration"}
+        </p>
+      )}
     </form>
   );
 };

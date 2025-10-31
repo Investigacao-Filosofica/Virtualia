@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-declare_id!("virtualia1111111111111111111111111111111111");
+declare_id!("11111111111111111111111111111111");
 
 #[program]
 pub mod virtualia {
@@ -17,7 +17,10 @@ pub mod virtualia {
 
     pub fn mint_content(ctx: Context<MintContent>, metadata: ContentMetadata) -> Result<()> {
         require!(!metadata.title.is_empty(), VirtualiaError::InvalidMetadata);
-        require!(metadata.uri.starts_with("http"), VirtualiaError::InvalidMetadata);
+        require!(
+            metadata.uri.starts_with("http") || metadata.uri.starts_with("ipfs://"),
+            VirtualiaError::InvalidMetadata
+        );
 
         let profile = &mut ctx.accounts.profile;
         profile.total_mints = profile.total_mints.checked_add(1).ok_or(VirtualiaError::Overflow)?;
