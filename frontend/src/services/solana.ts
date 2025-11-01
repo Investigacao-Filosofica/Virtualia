@@ -68,7 +68,7 @@ export const initializeUserProfile = async (
     const publicKey = wallet.publicKey;
 
     const [profilePda, bump] = PublicKey.findProgramAddressSync(
-      [Buffer.from("profile"), publicKey.toBuffer()],
+      [new TextEncoder().encode("profile"), publicKey.toBuffer()],
       PROGRAM_ID
     );
 
@@ -122,7 +122,7 @@ export const mintContent = async (
 
     // Get profile account to determine the next content index
     const [profilePda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("profile"), publicKey.toBuffer()],
+      [new TextEncoder().encode("profile"), publicKey.toBuffer()],
       PROGRAM_ID
     );
 
@@ -132,9 +132,9 @@ export const mintContent = async (
     // Generate content PDA
     const [contentPda] = PublicKey.findProgramAddressSync(
       [
-        Buffer.from("content"),
+        new TextEncoder().encode("content"),
         publicKey.toBuffer(),
-        new BN(currentTotalMints).toArrayLike(Buffer, "le", 8)
+        new BN(currentTotalMints).toArrayLike(Uint8Array, "le", 8)
       ],
       PROGRAM_ID
     );
