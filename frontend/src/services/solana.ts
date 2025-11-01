@@ -1,5 +1,6 @@
 import { Program, AnchorProvider, web3, BN } from "@coral-xyz/anchor";
 import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
+import { Buffer } from "buffer";
 import type { ContentType, EducationLevel, StorageProtocol } from "../components/MintedItemsContext";
 import { SOLANA_CONFIG, PROGRAM_ID_VALIDATED } from "../config/solana";
 
@@ -68,7 +69,7 @@ export const initializeUserProfile = async (
     const publicKey = wallet.publicKey;
 
     const [profilePda, bump] = PublicKey.findProgramAddressSync(
-      [new TextEncoder().encode("profile"), publicKey.toBuffer()],
+      [Buffer.from("profile"), publicKey.toBuffer()],
       PROGRAM_ID
     );
 
@@ -76,22 +77,62 @@ export const initializeUserProfile = async (
       // Check if profile already exists
       await program.account.profile.fetch(profilePda);
       return profilePda.toBase58(); // Already exists
-    } catch {
-      // Profile doesn't exist, initialize it
-      const tx = await program.methods
-        .initializeUser(bump)
-        .accounts({
-          authority: publicKey,
-          profile: profilePda,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+    } catch (fetchError: any) {
+      // Check if error is because account doesn't exist vs network error
+      // If account doesn't exist, error code will be specific
+      // If it's a network/RPC error, we should throw it properly
+      
+      // Account not found - safe to initialize
+      if (fetchError.code === -32602 || fetchError.message?.includes("Account does not exist") || fetchError.message?.includes("Invalid param")) {
+        try {
+          // Profile doesn't exist, initialize it
+          const tx = await program.methods
+            .initializeUser(bump)
+            .accounts({
+              authority: publicKey,
+              profile: profilePda,
+              systemProgram: SystemProgram.programId,
+            })
+            .rpc();
 
-      return profilePda.toBase58();
+          return profilePda.toBase58();
+        } catch (initError: any) {
+          // If initialization fails with "already in use", profile was created concurrently
+          // or fetch failed but account exists - try to fetch again
+          
+          // Check all possible locations where "already in use" error might appear
+          const hasAlreadyInUseError = 
+            initError.message?.includes("already in use") || 
+            initError.logs?.some((log: string) => log.includes("already in use")) ||
+            initError.transactionLogs?.some((log: string) => log.includes("already in use")) ||
+            JSON.stringify(initError).includes("already in use");
+          
+          if (hasAlreadyInUseError) {
+            try {
+              // Account exists, fetch it
+              await program.account.profile.fetch(profilePda);
+              return profilePda.toBase58();
+            } catch (refetchError) {
+              // If fetch still fails, throw the original init error
+              console.error("Profile initialization failed:", initError);
+              console.error("Refetch also failed:", refetchError);
+              throw initError;
+            }
+          }
+          // Otherwise, throw the initialization error
+          console.error("Profile initialization failed:", initError);
+          throw initError;
+        }
+      } else {
+        // Network/RPC error or other issue - rethrow
+        console.error("Failed to fetch profile:", fetchError);
+        throw fetchError;
+      }
     }
   } catch (error) {
     console.error("Failed to initialize user profile:", error);
-    throw new Error("Failed to initialize user profile on blockchain");
+    // Re-throw the original error, don't mask it
+    throw error;
   }
 };
 
@@ -122,7 +163,7 @@ export const mintContent = async (
 
     // Get profile account to determine the next content index
     const [profilePda] = PublicKey.findProgramAddressSync(
-      [new TextEncoder().encode("profile"), publicKey.toBuffer()],
+      [Buffer.from("profile"), publicKey.toBuffer()],
       PROGRAM_ID
     );
 
@@ -132,9 +173,9 @@ export const mintContent = async (
     // Generate content PDA
     const [contentPda] = PublicKey.findProgramAddressSync(
       [
-        new TextEncoder().encode("content"),
+        Buffer.from("content"),
         publicKey.toBuffer(),
-        new BN(currentTotalMints).toArrayLike(Uint8Array, "le", 8)
+        new BN(currentTotalMints).toArrayLike(Buffer, "le", 8)
       ],
       PROGRAM_ID
     );
@@ -166,7 +207,8 @@ export const mintContent = async (
     };
   } catch (error) {
     console.error("Failed to mint content:", error);
-    throw new Error(`Failed to mint content on blockchain: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Re-throw the original error, don't mask it
+    throw error;
   }
 };
 
